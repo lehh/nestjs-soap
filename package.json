@@ -1,13 +1,28 @@
 {
   "name": "nestjs-soap",
   "version": "1.0.0",
-  "description": "Nestjs module wrapper for soap package",
+  "description": "Nestjs module wrapper for soap",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
     "*.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lehh/nestjs-soap.git"
+  },
+  "keywords": [
+    "nestjs",
+    "soap",
+    "module"
+  ],
+  "author": "Alessandra Terra <aleterre10@outlook.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lehh/nestjs-soap/issues"
+  },
+  "homepage": "https://github.com/lehh/nestjs-soap#readme",
   "scripts": {
     "prebuild": "rm -rf dist",
     "prepare": "npm run build",
@@ -21,21 +36,6 @@
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lehh/nestjs-soap.git"
-  },
-  "keywords": [
-    "nestjs",
-    "soap",
-    "module"
-  ],
-  "author": "Alessandra Terra",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/lehh/nestjs-soap/issues"
-  },
-  "homepage": "https://github.com/lehh/nestjs-soap#readme",
   "peerDependencies": {
     "@nestjs/common": "^7.0.0"
   },
