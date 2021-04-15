@@ -41,8 +41,8 @@ import { Client } from 'nestjs-soap';
 export class ExampleService {
   constructor(@Inject('MY_SOAP_CLIENT') private readonly mySoapClient: Client) {}
 
-  exampleFunction() {
-    return this.mySoapClient.YourFunctionAsync();
+  async exampleFunction() {
+    return await this.mySoapClient.YourFunctionAsync();
   }
 }
 
