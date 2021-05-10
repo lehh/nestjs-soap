@@ -7,7 +7,8 @@ export const buildProvidersAsync = (soapOptions: SoapModuleOptions[]): FactoryPr
     (soapOption): FactoryProvider => ({
       provide: soapOption.name,
       useFactory: async (): Promise<Client> => {
-        return await createClientAsync(soapOption.uri);
+        // Need testing!
+        return await createClientAsync(soapOption.uri, soapOption.clientOptions);
       },
     }),
   );
