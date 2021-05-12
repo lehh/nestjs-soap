@@ -52,6 +52,8 @@ The injected Client is from the soap npm package. From here, please follow the u
 
 
 ### SoapModuleOptions
-`name`: The unique client name for class injection
+`name`: The unique client name for class injection.
 
 `uri`: The SOAP service uri.
+
+`clientOptions`: The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options) .
