@@ -42,7 +42,7 @@ describe('SoapProviders', () => {
 
       await providers[0].useFactory();
 
-      expect(createClientAsyncMock).toBeCalledWith(options[0].uri, undefined);
+      expect(createClientAsyncMock).toBeCalledWith(options[0].uri, options[0].clientOptions);
     });
 
     it('Should pass clientOptions to createClient', async () => {
