@@ -20,6 +20,7 @@ describe('SoapProviders', () => {
       {
         name: 'second',
         uri: 'http://efgh.com',
+        clientOptions: { disableCache: true },
       },
     ] as SoapModuleOptions[];
   });
@@ -41,7 +42,15 @@ describe('SoapProviders', () => {
 
       await providers[0].useFactory();
 
-      expect(createClientAsyncMock).toBeCalledWith(options[0].uri);
+      expect(createClientAsyncMock).toBeCalledWith(options[0].uri, options[0].clientOptions);
+    });
+
+    it('Should pass clientOptions to createClient', async () => {
+      const providers = buildProvidersAsync(options);
+
+      await providers[1].useFactory();
+
+      expect(createClientAsyncMock).toBeCalledWith(options[1].uri, options[1].clientOptions);
     });
   });
 });
