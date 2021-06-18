@@ -30,11 +30,9 @@ import { SoapModule } from 'nestjs-soap';
 })
 export class ExampleModule {}
 ```
-The `registerAsync` function receives an array of [SoapModuleOptions](#SoapModuleOptions). This means you can create as many clients you need. You just need to create unique names for each one.
+The `registerAsync` or `forRoot` function receives an array of [SoapModuleOptions](#SoapModuleOptions). This means you can create as many clients you need. You just need to create unique names for each one.
 
-
-Another way to import the SoapModule is using `forRootAsync`, Like other [factory provider](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory), our factory function can be `async` and can inject dependencies through `inject`:
-
+Another way to import the SoapModule is using `forRootAsync`, like other [factory provider](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory). Our factory function can be `async` and can inject dependencies through `inject`:
 
 ```javascript
 import { Module } from '@nestjs/common';
@@ -88,6 +86,6 @@ The injected Client is from the soap npm package. From here, please follow the u
 
 `uri`: The SOAP service uri.
 
-`auth`: Option Basic authentication is enabled if you will fill in the `username` and `password`.
+`auth`: Basic authentication filling in the `username` and `password` fields when needed.
  
 `clientOptions`: The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options) .
