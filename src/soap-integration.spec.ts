@@ -8,6 +8,7 @@ describe('SoapModule (integration)', () => {
 
   const MY_SOAP_URI = 'http://my.soap.websl';
 
+  const MY_SOAP_CLIENT_REGISTER = 'MY_SOAP_CLIENT_REGISTER';
   const MY_SOAP_CLIENT_FOR_ROOT = 'MY_SOAP_CLIENT_FOR_ROOT';
   const MY_SOAP_CLIENT_FOR_ROOT_ASYNC = 'MY_SOAP_CLIENT_FOR_ROOT_ASYNC';
 
@@ -25,6 +26,12 @@ describe('SoapModule (integration)', () => {
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [
+        SoapModule.registerAsync([
+            {
+                name: MY_SOAP_CLIENT_REGISTER,
+                uri: MY_SOAP_URI
+            },
+        ]),
         SoapModule.forRoot([
             {
                 name: MY_SOAP_CLIENT_FOR_ROOT,
@@ -44,6 +51,8 @@ describe('SoapModule (integration)', () => {
     .useValue(MY_SOAP_CLIENT_PROVIDER_MOCK)
     .overrideProvider(MY_SOAP_CLIENT_FOR_ROOT_ASYNC)
     .useValue(MY_SOAP_CLIENT_PROVIDER_MOCK)
+    .overrideProvider(MY_SOAP_CLIENT_REGISTER)
+    .useValue(MY_SOAP_CLIENT_PROVIDER_MOCK)
     .compile();
 
     app = moduleFixture.createNestApplication();
@@ -60,5 +69,9 @@ describe('SoapModule (integration)', () => {
 
   test('should be able to get the service using forRootAsync', async () => {
     expect(app.get(MY_SOAP_CLIENT_FOR_ROOT_ASYNC)).toEqual(MY_SOAP_CLIENT_PROVIDER_MOCK)
+  });
+
+  test('should be able to get the service using registerAsync', async () => {
+    expect(app.get(MY_SOAP_CLIENT_REGISTER)).toEqual(MY_SOAP_CLIENT_PROVIDER_MOCK)
   });
 });

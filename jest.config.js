@@ -2,7 +2,7 @@ module.exports = {
   verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
-  collectCoverage: false,
+  collectCoverage: true,
   setupFilesAfterEnv: [
     '<rootDir>/jest.setup.ts'
   ],
@@ -12,6 +12,7 @@ module.exports = {
     '!*.config.{ts,js}',
     '!*.d.ts',
     '!.eslintrc.js',
+    '!**/src/index.ts'
   ],
   coverageThreshold: {
     global: {
