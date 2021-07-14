@@ -32,7 +32,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint:check": "tslint -p tsconfig.json -c tslint.json",
     "precommit": "lint-staged",
-    "test": "jest",
+    "test": "jest --no-cache --coverage",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json"
