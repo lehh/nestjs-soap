@@ -80,6 +80,28 @@ export class ExampleService {
 
 The injected Client is from the soap npm package. From here, please follow the use instructions on the [soap repository](https://www.npmjs.com/package/soap).
 
+### Soap Module Factory
+
+```typescript
+import { Injectable, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SoapModuleOptions, SoapModuleOptionsFactory } from 'nestjs-soap';
+
+@Injectable()
+export class TibcoConfigService implements SoapModuleOptionsFactory {
+  constructor(
+    @Inject(ConfigService) private readonly configService: ConfigService
+  )
+
+  createSoapModuleOptions(): SoapModuleOptions {
+    uri: configService.get<string>('soap.uri'),
+    auth: {
+      username: configService.get<string>('soap.username'),
+      password: configService.get<string>('soap.password'),
+    },
+  }
+}
+```
 
 ### SoapModuleOptions
 `name`: The unique client name for class injection.
