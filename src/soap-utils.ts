@@ -18,8 +18,3 @@ export async function createSoapClient(option: SoapModuleOptions): Promise<Clien
 
   return client
 }
-
-export async function createSoapClients(options: SoapModuleOptions[]): Promise<Client[]> {
-  const asyncClients = options.map(createSoapClient);
-  return Promise.all(asyncClients)
-}

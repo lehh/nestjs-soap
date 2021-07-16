@@ -16,11 +16,24 @@ export const createProviders = (options: SoapModuleOptions[]): FactoryProvider[]
 }
 
 export const createAsyncProviders = (options: SoapModuleAsyncOptions): Provider[] => {
+  const soapClientConnectionProvider = {
+    provide: options.connectionName,
+    useFactory: async (options: SoapModuleOptions) => createSoapClient(options),
+    inject: [
+      SOAP_MODULE_OPTIONS
+    ]
+  }
+
   if (options.useExisting || options.useFactory) {
-    return [this.createAsyncOptionsProvider(options)];
+    return [
+      soapClientConnectionProvider,
+      _createAsyncOptionsProvider(options),
+    ];
   }
   const useClass = options.useClass as Type<SoapModuleOptionsFactory>;
+
   return [
+    soapClientConnectionProvider,
     _createAsyncOptionsProvider(options),
     {
       provide: useClass,

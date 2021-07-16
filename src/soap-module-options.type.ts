@@ -15,12 +15,13 @@ export type SoapModuleOptions = {
 };
 
 export interface SoapModuleOptionsFactory {
-  createSoapModuleOptions(): Promise<SoapModuleOptions[]> | SoapModuleOptions[];
+  createSoapModuleOptions(): Promise<Omit<SoapModuleOptions, "connectionName">> | Omit<SoapModuleOptions, "connectionName">;
 }
 
 export interface SoapModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   inject?: any[];
   useClass?: Type<SoapModuleOptionsFactory>;
   useExisting?: Type<SoapModuleOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<SoapModuleOptions[]> | SoapModuleOptions[];
+  connectionName: string;
+  useFactory?: (...args: any[]) => Promise<Omit<SoapModuleOptions, "connectionName">> | Omit<SoapModuleOptions, "connectionName">;
 }

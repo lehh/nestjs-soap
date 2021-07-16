@@ -1,4 +1,4 @@
-import { INestApplication, Inject } from '@nestjs/common';
+import { INestApplication, Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { createClientAsync } from 'soap';
 import { mocked } from 'ts-jest/utils';
@@ -7,9 +7,6 @@ import { SoapModule } from './';
 
 describe('SoapModule (integration)', () => {
   const MY_SOAP_URI = 'http://my.soap.websl';
-  const MY_SOAP_CLIENT_PROVIDER_MOCK = {
-    uri: 'http://my.soap.websl'
-  }
 
   describe("forRoot", () => {
     const MY_SOAP_CLIENT_REGISTER = 'MY_SOAP_CLIENT_REGISTER';
@@ -73,34 +70,41 @@ describe('SoapModule (integration)', () => {
     });
   })
 
-  describe.skip("forRootAsync", () => {
-    const MY_SOAP_CLIENT_FOR_ROOT_ASYNC = 'MY_SOAP_CLIENT_FOR_ROOT_ASYNC';
-    const MY_CONFIG_SERVICE_PROVIDER = "MY_CONFIG_SERVICE_PROVIDER"
+  describe("forRootAsync", () => {
     let app: INestApplication;
     
     // use a config service to test the forRootAsync
+    @Injectable()
     class MySoapClientForRootAsyncConfig implements SoapModuleOptionsFactory {
-      constructor(@Inject(MY_CONFIG_SERVICE_PROVIDER) private readonly config: any) {}
       createSoapModuleOptions () {
-        return [{
-          uri: this.config.uri,
-          connectionName: 'MY_SOAP_CLIENT_FOR_ROOT_ASYNC'
-        }]
+        return {
+          uri: "this.config.uri"
+        }
       }
     } 
 
     beforeAll(async () => {
+      mocked(createClientAsync).mockResolvedValue(
+        // @ts-ignore
+        Promise.resolve({
+          client: "FOR_ROOT_ASYNC"
+        })
+      )
+
       const moduleFixture = await Test.createTestingModule({
-        providers: [
-          {
-            provide: MY_CONFIG_SERVICE_PROVIDER,
-            useValue: MY_SOAP_CLIENT_PROVIDER_MOCK
-          }
-        ],
         imports: [
           SoapModule.forRootAsync(
             {
-              useClass: MySoapClientForRootAsyncConfig
+              useClass: MySoapClientForRootAsyncConfig,
+              connectionName: "MY_CONNECTION"
+            },
+          ),
+          SoapModule.forRootAsync(
+            {
+              useFactory: () => ({
+                uri: 'my.wsdl.uri'
+              }),
+              connectionName: "MY_FACTORY_CONNECTION"
             },
           ),
         ],
@@ -115,10 +119,20 @@ describe('SoapModule (integration)', () => {
       await app.close();
     });
   
-    test('should be able to get the service using forRootAsync', async () => {
-      expect(app.get(MY_SOAP_CLIENT_FOR_ROOT_ASYNC)).toEqual(MY_SOAP_CLIENT_PROVIDER_MOCK)
+    test('should be able to get the client using forRootAsync useClass', async () => {
+      expect(app.get("MY_CONNECTION")).toEqual(
+        expect.objectContaining({
+          client: "FOR_ROOT_ASYNC"
+        })
+      )
     });
 
+    test('should be able to get the client using forRootAsync useFactory', async () => {
+      expect(app.get("MY_FACTORY_CONNECTION")).toEqual(
+        expect.objectContaining({
+          client: "FOR_ROOT_ASYNC"
+        })
+      )
+    });
   })
-
 });
