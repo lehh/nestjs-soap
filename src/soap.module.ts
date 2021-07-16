@@ -1,4 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
+import { SoapCoreModule } from './soap-core.module';
 import { SoapModuleAsyncOptions, SoapModuleOptions } from './soap-module-options.type';
 import { createProviders, createAsyncProviders } from './soap-providers';
 
@@ -22,6 +23,9 @@ export class SoapModule {
     const providers = createAsyncProviders(soapOptions);
 
     return {
+      imports: [
+        SoapCoreModule.forRootAsync(providers)
+      ],
       module: SoapModule,
       exports: providers,
       providers,

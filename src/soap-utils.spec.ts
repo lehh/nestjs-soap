@@ -1,5 +1,5 @@
 import { ServiceUnavailableException } from '@nestjs/common';
-import createSoapClient from './soap-utils';
+import { createSoapClient } from './soap-utils';
 import { createClientAsync, BasicAuthSecurity } from 'soap';
 import { mocked } from 'ts-jest/utils';
 
@@ -23,6 +23,7 @@ describe('SoapUtils', () => {
     test('should throw service error on connection issue', async () => {
         const SOAP_MODULE_OPTIONS = {
             uri: SOAP_URI,
+            connectionName: "PROVIDER_NAME",
             clientOptions: CLIENT_OPTIONS
         }
 
@@ -34,6 +35,7 @@ describe('SoapUtils', () => {
     test('should create a new client with credentials', async () => {
         const SOAP_MODULE_OPTIONS = {
             uri: SOAP_URI,
+            connectionName: "PROVIDER_NAME",
             clientOptions: CLIENT_OPTIONS
         }
 
@@ -45,6 +47,7 @@ describe('SoapUtils', () => {
     test('should create a new client without credentials', async () => {
         const SOAP_MODULE_OPTIONS = {
             uri: SOAP_URI,
+            connectionName: "PROVIDER_NAME",
             auth: {
                 username: 'foo',
                 password: 'bar'
