@@ -1,13 +1,11 @@
-import { Test } from '@nestjs/testing';
 import { SoapModuleOptions, SoapModuleAsyncOptions } from './soap-module-options.type';
 import { buildProvidersAsync, createAsyncProviders } from './soap-providers';
 import { Provider } from '@nestjs/common';
 
-import { Client, createClientAsync } from 'soap';
+import { createClientAsync } from 'soap';
 import { mocked } from 'ts-jest/utils';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
 
-jest.mock('soap');
 const createClientAsyncMock = mocked(createClientAsync);
 
 describe('SoapProviders', () => {

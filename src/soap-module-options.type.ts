@@ -1,5 +1,5 @@
 import { IOptions } from 'soap';
-import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import { ModuleMetadata, Type } from '@nestjs/common';
 
 export type BasicAuth = {
   username: string;
