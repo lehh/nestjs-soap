@@ -8,19 +8,18 @@ export type BasicAuth = {
 
 export type SoapModuleOptions = {
   uri: string;
-  name?: string;
+  connectionName: string;
   auth?: BasicAuth;
   clientOptions?: IOptions;
 };
 
 export interface SoapModuleOptionsFactory {
-  createSoapModuleOptions(): Promise<SoapModuleOptions> | SoapModuleOptions;
+  createSoapModuleOptions(): Promise<SoapModuleOptions[]> | SoapModuleOptions[];
 }
 
 export interface SoapModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-  name?: string;
   inject?: any[];
   useClass?: Type<SoapModuleOptionsFactory>;
   useExisting?: Type<SoapModuleOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<SoapModuleOptions> | SoapModuleOptions;
+  useFactory?: (...args: any[]) => Promise<SoapModuleOptions[]> | SoapModuleOptions[];
 }
