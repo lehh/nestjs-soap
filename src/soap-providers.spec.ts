@@ -96,6 +96,5 @@ describe('SoapProviders', () => {
 
       expect(result).toEqual(expectedResult);
     });
-
   });
 });

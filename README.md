@@ -82,23 +82,27 @@ The injected Client is from the soap npm package. From here, please follow the u
 
 ### Soap Module Factory
 
+You can also create your own factory implemeting SoapModuleOptionsFactory
+
 ```typescript
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SoapModuleOptions, SoapModuleOptionsFactory } from 'nestjs-soap';
 
 @Injectable()
-export class TibcoConfigService implements SoapModuleOptionsFactory {
+export class ExampleSoapConfigService implements SoapModuleOptionsFactory {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService
   )
 
   createSoapModuleOptions(): SoapModuleOptions {
-    uri: configService.get<string>('soap.uri'),
-    auth: {
-      username: configService.get<string>('soap.username'),
-      password: configService.get<string>('soap.password'),
-    },
+    return {
+      uri: configService.get<string>('soap.uri'),
+      auth: {
+        username: configService.get<string>('soap.username'),
+        password: configService.get<string>('soap.password'),
+      },
+    };
   }
 }
 ```
