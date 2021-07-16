@@ -1,6 +1,6 @@
 {
   "name": "nestjs-soap",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Nestjs module wrapper for soap",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
