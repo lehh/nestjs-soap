@@ -31,7 +31,8 @@
     "format:check": "prettier -c \"src/**/*.ts\" \"test/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint:check": "tslint -p tsconfig.json -c tslint.json",
-    "test": "jest",
+    "precommit": "lint-staged",
+    "test": "jest --no-cache --coverage",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json"
@@ -45,34 +46,34 @@
   "devDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
+    "@nestjs/platform-express": "^8.0.2",
     "@nestjs/testing": "^7.3.2",
     "@types/jest": "25.1.4",
     "@types/node": "^13.13.14",
     "@types/supertest": "^2.0.10",
+    "husky": "^7.0.1",
+    "jest": "^26.0.0",
+    "lint-staged": "^11.0.1",
+    "prettier": "^2.3.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.0",
-    "jest": "^26.0.0",
-    "prettier": "1.19.1",
     "supertest": "4.0.2",
-    "ts-jest": "26.1.2",
+    "ts-jest": "^26.1.2",
     "ts-node": "8.10.2",
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
     "typescript": "3.9.6"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
