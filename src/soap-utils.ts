@@ -1,16 +1,25 @@
+import { ServiceUnavailableException } from '@nestjs/common';
 import { BasicAuthSecurity, Client, createClientAsync, ISecurity } from 'soap';
 import { SoapModuleOptions } from './soap-module-options.type';
 
-export default function createSoapClient(options: SoapModuleOptions): Promise<Client> {
-  return createClientAsync(options.uri, options.clientOptions).then(Client => {
-    if (options.auth) {
-      const basicAuth: ISecurity = new BasicAuthSecurity(
-        options.auth.username,
-        options.auth.password,
-      );
-      Client.setSecurity(basicAuth);
-    }
+export async function createSoapClient(option: SoapModuleOptions): Promise<Client> {
+  const client = await createClientAsync(option.uri, option.clientOptions)?.catch(err => { 
+    throw new ServiceUnavailableException(err)
+  })
 
-    return Client;
-  });
+  if (option.auth) {
+    const basicAuth: ISecurity = new BasicAuthSecurity(
+      option.auth.username,
+      option.auth.password,
+    );
+
+    client.setSecurity(basicAuth);
+  }
+
+  return client
+}
+
+export async function createSoapClients(options: SoapModuleOptions[]): Promise<Client[]> {
+  const asyncClients = options.map(createSoapClient);
+  return Promise.all(asyncClients)
 }
