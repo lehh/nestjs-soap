@@ -41,9 +41,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    SoapModule.forRootAsync([
-      { 
-        name: 'MY_SOAP_CLIENT',
+    SoapModule.forRootAsync({ 
+        connectionName: 'MY_SOAP_CLIENT',
         inject: [ConfigService],
         useFactory: async (
           configService: ConfigService,
@@ -55,7 +54,7 @@ import { ConfigService } from '@nestjs/config';
           },
         }),        
       }
-    ]),
+    ),
   ],
 })
 export class ExampleModule {}

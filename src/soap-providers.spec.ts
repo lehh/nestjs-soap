@@ -1,4 +1,4 @@
-import { createProviders, createAsyncProviders } from "./soap-providers";
+import { createProviders } from "./soap-providers";
 
 describe('SoapProviders', () => {
   const PROVIDER_OPTIONS = [
