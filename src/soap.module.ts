@@ -20,7 +20,17 @@ export class SoapModule {
   }
 
   static forRootAsync(soapOptions: SoapModuleAsyncOptions): DynamicModule {
-    const providers = [
+    const providers = SoapModule.createAsyncProviders(soapOptions)
+
+    return {
+      module: SoapModule,
+      exports: providers,
+      providers,
+    };
+  }
+
+  private static createAsyncProviders = (soapOptions: SoapModuleAsyncOptions) => {
+    return [
       ...createAsyncProviders(soapOptions),
       {
         provide: SOAP_MODULE_INITIALIZATION,
@@ -29,12 +39,6 @@ export class SoapModule {
           SOAP_MODULE_OPTIONS
         ]
       },
-    ];
-
-    return {
-      module: SoapModule,
-      exports: providers,
-      providers,
-    };
+    ]
   }
 }

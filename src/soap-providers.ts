@@ -16,47 +16,67 @@ export const createProviders = (options: SoapModuleOptions[]): FactoryProvider[]
 }
 
 export const createAsyncProviders = (options: SoapModuleAsyncOptions): Provider[] => {
-  const soapClientConnectionProvider = {
+  if (options.useClass) {
+    return createOptionsProviderClass(options)
+  }
+
+  return createOptionsProviderFactory(options)
+};
+
+const createOptionsProviderClass = (options: SoapModuleAsyncOptions) => {
+  const useClass = options.useClass as Type<SoapModuleOptionsFactory>;
+
+  return [
+    getSoapClientConnectionProvider(options),
+    createAsyncOptionsProvider(options),
+    {
+      provide: useClass,
+      useClass,
+    },
+  ]
+}
+
+const createOptionsProviderFactory = (options: SoapModuleAsyncOptions) => {
+  return [
+    getSoapClientConnectionProvider(options),
+    createAsyncOptionsProvider(options),
+  ];
+}
+
+const getSoapClientConnectionProvider = (options: SoapModuleAsyncOptions): Provider => {
+  return {
     provide: options.connectionName,
     useFactory: async (options: SoapModuleOptions) => createSoapClient(options),
     inject: [
       SOAP_MODULE_OPTIONS
     ]
   }
+}
 
-  if (options.useExisting || options.useFactory) {
-    return [
-      soapClientConnectionProvider,
-      _createAsyncOptionsProvider(options),
-    ];
+const createAsyncOptionsProvider = (options: SoapModuleAsyncOptions): Provider => {
+  if (options.useFactory) {
+    return getSoapModuleFactoryOptions(options)
   }
-  const useClass = options.useClass as Type<SoapModuleOptionsFactory>;
 
-  return [
-    soapClientConnectionProvider,
-    _createAsyncOptionsProvider(options),
-    {
-      provide: useClass,
-      useClass,
-    },
-  ];
+  return getSoapModuleClassOptions(options)
 };
 
-const _createAsyncOptionsProvider = (options: SoapModuleAsyncOptions): Provider => {
-  if (options.useFactory) {
-    return {
-      inject: options.inject || [],
-      provide: SOAP_MODULE_OPTIONS,
-      useFactory: options.useFactory,
-    };
-  }
+const getSoapModuleFactoryOptions = (options: SoapModuleAsyncOptions) => {
+  return {
+    inject: options.inject || [],
+    provide: SOAP_MODULE_OPTIONS,
+    useFactory: options.useFactory,
+  };
+}
 
-  const inject = [(options.useClass || options.useExisting) as Type<SoapModuleOptionsFactory>];
-
+const getSoapModuleClassOptions = (options: SoapModuleAsyncOptions): Provider => {
   return {
     provide: SOAP_MODULE_OPTIONS,
-    useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
-      await optionsFactory.createSoapModuleOptions(),
-    inject,
-  };
-};
+    useFactory: async (optionsFactory: SoapModuleOptionsFactory) => optionsFactory.createSoapModuleOptions(),
+    inject: getDependencies(options),
+  }
+}
+
+const getDependencies = (options: SoapModuleAsyncOptions) => {
+  return [(options.useClass || options.useExisting) as Type<SoapModuleOptionsFactory>]
+}
