@@ -82,10 +82,13 @@ describe('SoapProviders', () => {
       const expectedResult = [
         { provide: SOAP_MODULE_OPTIONS, inject: [], useFactory: expect.any(Function) },
         {
-          provide: optionsAsync[1].useClass,
+          provide: SOAP_MODULE_OPTIONS,
           inject: [optionsAsync[1].useClass],
-          useClass: optionsAsync[1].useClass,
           useFactory: expect.any(Function),
+        },
+        {
+          provide: optionsAsync[1].useClass,
+          useClass: optionsAsync[1].useClass,
         },
         {
           provide: SOAP_MODULE_OPTIONS,
