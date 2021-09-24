@@ -1,6 +1,6 @@
 import { SoapModuleOptions, SoapModuleAsyncOptions } from './soap-module-options.type';
-import { buildClientProvider, createAsyncProviders } from './soap-providers';
-import { FactoryProvider, Provider } from '@nestjs/common';
+import { buildAsyncProviders, buildClientProvider } from './soap-providers';
+import { FactoryProvider } from '@nestjs/common';
 
 import { createClientAsync } from 'soap';
 import { mocked } from 'ts-jest/utils';
@@ -10,26 +10,17 @@ import { SoapService } from './soap.service';
 const createClientAsyncMock = mocked(createClientAsync);
 
 describe('SoapProviders', () => {
-  let option: SoapModuleOptions;
-  let options: SoapModuleOptions[];
-
-  let optionsAsync: SoapModuleAsyncOptions[];
+  let soapOptions: SoapModuleOptions;
+  let soapOptionsAsync: SoapModuleAsyncOptions[];
 
   beforeEach(() => {
-    options = [
-      {
-        name: 'first',
-        uri: 'http://abcd.com',
-      },
-      {
-        name: 'second',
-        uri: 'http://efgh.com',
-        clientOptions: { disableCache: true },
-      },
-    ] as SoapModuleOptions[];
-    option = options[0];
+    soapOptions = {
+      name: 'myclient',
+      uri: 'http://efgh.com',
+      clientOptions: { disableCache: true },
+    } as SoapModuleOptions;
 
-    optionsAsync = [
+    soapOptionsAsync = [
       {
         name: 'first',
         useFactory: () => ({
@@ -49,41 +40,63 @@ describe('SoapProviders', () => {
 
   describe('buildClientProvider', () => {
     it('Should create soap async client provider', () => {
-      const result = buildClientProvider(option);
+      const result = buildClientProvider(soapOptions.name);
 
       const expectedResult = {
-        provide: option.name,
+        provide: soapOptions.name,
         useFactory: async (soapService: SoapService) => {
-          return await soapService.createAsyncClient()
+          return await soapService.createAsyncClient();
         },
-        inject: [SoapService]
+        inject: [SoapService],
       } as FactoryProvider;
 
       expect(JSON.stringify(result)).toEqual(JSON.stringify(expectedResult));
     });
   });
 
-  describe('createAsyncProviders', () => {
-    it('Should map soap module options to async providers', () => {
-      const result = createAsyncProviders(optionsAsync);
+  describe('buildAsyncProviders', () => {
+    it('Should return an useFactory provider', () => {
+      const result = buildAsyncProviders(soapOptionsAsync[0]);
 
       const expectedResult = [
-        { provide: SOAP_MODULE_OPTIONS, inject: [], useFactory: expect.any(Function) },
         {
           provide: SOAP_MODULE_OPTIONS,
-          inject: [optionsAsync[1].useClass],
+          inject: [],
+          useFactory: expect.any(Function),
+        },
+      ];
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('Should return an useClass provider', () => {
+      const result = buildAsyncProviders(soapOptionsAsync[1]);
+
+      const expectedResult = [
+        {
+          provide: SOAP_MODULE_OPTIONS,
+          inject: [soapOptionsAsync[1].useClass],
           useFactory: expect.any(Function),
         },
         {
-          provide: optionsAsync[1].useClass,
-          useClass: optionsAsync[1].useClass,
+          provide: soapOptionsAsync[1].useClass,
+          useClass: soapOptionsAsync[1].useClass,
         },
+      ];
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('Should return an useExisting provider', () => {
+      const result = buildAsyncProviders(soapOptionsAsync[2]);
+
+      const expectedResult = [
         {
           provide: SOAP_MODULE_OPTIONS,
-          inject: [optionsAsync[2].useExisting],
+          inject: [soapOptionsAsync[2].useExisting],
           useFactory: expect.any(Function),
         },
-      ] as Provider[];
+      ];
 
       expect(result).toEqual(expectedResult);
     });
