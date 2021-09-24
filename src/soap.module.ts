@@ -2,9 +2,13 @@ import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { SoapModuleAsyncOptions, SoapModuleOptions } from './soap-module-options.type';
 import { buildProvidersAsync, createAsyncProviders } from './soap-providers';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
+import { SoapService } from './soap.service';
 import createSoapClient from './soap-utils';
 
-@Module({})
+@Module({
+  providers: [SoapService],
+  exports: [SoapService],
+})
 export class SoapModule {
   static registerAsync(soapOptions: SoapModuleOptions[]): DynamicModule {
     const providers = buildProvidersAsync(soapOptions);
@@ -27,7 +31,7 @@ export class SoapModule {
   }
 
   static forRootAsync(soapOptions: SoapModuleAsyncOptions[]): DynamicModule {
-    const providers: Provider[] = soapOptions.map(soapOption => ({
+    const providers: Provider[] = soapOptions.map((soapOption) => ({
       inject: [SOAP_MODULE_OPTIONS],
       provide: soapOption.name,
       useFactory: (options: SoapModuleOptions) => createSoapClient(options),
