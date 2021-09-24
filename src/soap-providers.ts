@@ -6,16 +6,15 @@ import {
   SoapModuleOptions,
   SoapModuleOptionsFactory,
 } from './soap-module-options.type';
+import { SoapService } from './soap.service';
 
-export const buildProvider = (soapOption: SoapModuleOptions): FactoryProvider => ({
-  provide: soapOption.name,
-  useFactory: async (): Promise<Client> => {
-    return await createClientAsync(soapOption.uri, soapOption.clientOptions);
+export const buildClientProvider = (soapOptions: SoapModuleOptions): FactoryProvider => ({
+  provide: soapOptions.name,
+  useFactory: async (soapService: SoapService) => {
+    return await soapService.createAsyncClient()
   },
-});
-
-export const buildProvidersAsync = (soapOptions: SoapModuleOptions[]): FactoryProvider[] =>
-  soapOptions.map(buildProvider);
+  inject: [SoapService]
+})
 
 export const createAsyncProviders = (options: SoapModuleAsyncOptions[]): Provider[] => {
   const asyncProviders: Provider[] = [];

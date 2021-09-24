@@ -1,10 +1,11 @@
 import { SoapModuleOptions, SoapModuleAsyncOptions } from './soap-module-options.type';
-import { buildProvidersAsync, createAsyncProviders } from './soap-providers';
-import { Provider } from '@nestjs/common';
+import { buildClientProvider, createAsyncProviders } from './soap-providers';
+import { FactoryProvider, Provider } from '@nestjs/common';
 
 import { createClientAsync } from 'soap';
 import { mocked } from 'ts-jest/utils';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
+import { SoapService } from './soap.service';
 
 const createClientAsyncMock = mocked(createClientAsync);
 
@@ -46,32 +47,19 @@ describe('SoapProviders', () => {
     ] as SoapModuleAsyncOptions[];
   });
 
-  describe('buildProvidersAsync', () => {
-    it('Should map soap module options to providers', () => {
-      const result = buildProvidersAsync(options);
+  describe('buildClientProvider', () => {
+    it('Should create soap async client provider', () => {
+      const result = buildClientProvider(option);
 
-      const expectedResult = [
-        { provide: options[0].name, useFactory: expect.any(Function) },
-        { provide: options[1].name, useFactory: expect.any(Function) },
-      ] as Provider[];
+      const expectedResult = {
+        provide: option.name,
+        useFactory: async (soapService: SoapService) => {
+          return await soapService.createAsyncClient()
+        },
+        inject: [SoapService]
+      } as FactoryProvider;
 
-      expect(result).toEqual(expectedResult);
-    });
-
-    it('Should create client and return it on useFactory', async () => {
-      const providers = buildProvidersAsync(options);
-
-      await providers[0].useFactory();
-
-      expect(createClientAsyncMock).toBeCalledWith(options[0].uri, options[0].clientOptions);
-    });
-
-    it('Should pass clientOptions to createClient', async () => {
-      const providers = buildProvidersAsync(options);
-
-      await providers[1].useFactory();
-
-      expect(createClientAsyncMock).toBeCalledWith(options[1].uri, options[1].clientOptions);
+      expect(JSON.stringify(result)).toEqual(JSON.stringify(expectedResult));
     });
   });
 
