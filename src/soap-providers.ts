@@ -1,17 +1,16 @@
 import { FactoryProvider, Provider, Type } from '@nestjs/common';
-import { createClientAsync, Client } from 'soap';
+import { Client } from 'soap';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
+import createSoapClient from './soap-utils';
 import {
   SoapModuleAsyncOptions,
   SoapModuleOptions,
   SoapModuleOptionsFactory,
 } from './soap-module-options.type';
 
-export const buildProvider = (soapOption: SoapModuleOptions): FactoryProvider => ({
+const buildProvider = (soapOption: SoapModuleOptions): FactoryProvider => ({
   provide: soapOption.name,
-  useFactory: async (): Promise<Client> => {
-    return await createClientAsync(soapOption.uri, soapOption.clientOptions);
-  },
+  useFactory: (): Promise<Client> => createSoapClient(soapOption)
 });
 
 export const buildProvidersAsync = (soapOptions: SoapModuleOptions[]): FactoryProvider[] =>
