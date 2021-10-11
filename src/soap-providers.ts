@@ -25,48 +25,48 @@ export const createAsyncProviders = (options: SoapModuleAsyncOptions[]): Provide
   }
 
   return asyncProviders;
-}
+};
 
 const createAsyncProvider = (option: SoapModuleAsyncOptions): Provider[] => {
   if (option.useClass) return createUseClassProvider(option);
   if (option.useExisting) return createUseExistingProvider(option);
   if (option.useFactory) return createUseFactoryProvider(option);
-}
+};
 
 const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {
-    const useClass = option.useClass as Type<SoapModuleOptionsFactory>;
+  const useClass = option.useClass as Type<SoapModuleOptionsFactory>;
 
-    return [
-      {
-        provide: SOAP_MODULE_OPTIONS,
-        useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
-          await optionsFactory.createSoapModuleOptions(),
-        inject: [useClass],
-      },
-      {
-        provide: useClass,
-        useClass,
-      },
-    ];
-}
+  return [
+    {
+      provide: SOAP_MODULE_OPTIONS + option.name,
+      useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
+        await optionsFactory.createSoapModuleOptions(),
+      inject: [useClass],
+    },
+    {
+      provide: useClass,
+      useClass,
+    },
+  ];
+};
 
 const createUseExistingProvider = (option: SoapModuleAsyncOptions): Provider[] => {
   return [
     {
-      provide: SOAP_MODULE_OPTIONS,
+      provide: SOAP_MODULE_OPTIONS + option.name,
       useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
         await optionsFactory.createSoapModuleOptions(),
       inject: [option.useExisting],
-    }
-  ]
-}
+    },
+  ];
+};
 
 const createUseFactoryProvider = (option: SoapModuleAsyncOptions): Provider[] => {
   return [
     {
-      provide: SOAP_MODULE_OPTIONS,
+      provide: SOAP_MODULE_OPTIONS + option.name,
       useFactory: option.useFactory,
       inject: option.inject || [],
     },
   ];
-}
+};

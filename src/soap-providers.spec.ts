@@ -80,9 +80,13 @@ describe('SoapProviders', () => {
       const result = createAsyncProviders(optionsAsync);
 
       const expectedResult = [
-        { provide: SOAP_MODULE_OPTIONS, inject: [], useFactory: expect.any(Function) },
         {
-          provide: SOAP_MODULE_OPTIONS,
+          provide: SOAP_MODULE_OPTIONS + optionsAsync[0].name,
+          inject: [],
+          useFactory: expect.any(Function),
+        },
+        {
+          provide: SOAP_MODULE_OPTIONS + optionsAsync[1].name,
           inject: [optionsAsync[1].useClass],
           useFactory: expect.any(Function),
         },
@@ -91,7 +95,7 @@ describe('SoapProviders', () => {
           useClass: optionsAsync[1].useClass,
         },
         {
-          provide: SOAP_MODULE_OPTIONS,
+          provide: SOAP_MODULE_OPTIONS + optionsAsync[2].name,
           inject: [optionsAsync[2].useExisting],
           useFactory: expect.any(Function),
         },

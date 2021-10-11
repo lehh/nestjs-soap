@@ -27,8 +27,8 @@ export class SoapModule {
   }
 
   static forRootAsync(soapOptions: SoapModuleAsyncOptions[]): DynamicModule {
-    const providers: Provider[] = soapOptions.map(soapOption => ({
-      inject: [SOAP_MODULE_OPTIONS],
+    const providers: Provider[] = soapOptions.map((soapOption) => ({
+      inject: [SOAP_MODULE_OPTIONS + soapOption.name],
       provide: soapOption.name,
       useFactory: (options: SoapModuleOptions) => createSoapClient(options),
     }));
