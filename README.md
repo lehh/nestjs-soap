@@ -37,13 +37,14 @@ Another way to import the SoapModule is using `forRootAsync`, like other [factor
 ```javascript
 import { Module } from '@nestjs/common';
 import { SoapModule, SoapModuleOptions } from 'nestjs-soap';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService, ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     SoapModule.forRootAsync([
       { 
         name: 'MY_SOAP_CLIENT',
+        imports: [ConfigModule],
         inject: [ConfigService],
         useFactory: async (
           configService: ConfigService,

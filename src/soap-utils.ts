@@ -1,9 +1,10 @@
-import { ServiceUnavailableException } from '@nestjs/common';
+import { ModuleMetadata, ServiceUnavailableException } from '@nestjs/common';
 import { BasicAuthSecurity, Client, createClientAsync, ISecurity } from 'soap';
+import { SoapModuleAsyncOptions } from 'src';
 import { SoapModuleOptions } from './soap-module-options.type';
 
-export default async function createSoapClient(options: SoapModuleOptions): Promise<Client> {
-  const client = await createClientAsync(options.uri, options.clientOptions)?.catch(err => {
+export async function createSoapClient(options: SoapModuleOptions): Promise<Client> {
+  const client = await createClientAsync(options.uri, options.clientOptions)?.catch((err) => {
     throw new ServiceUnavailableException(err);
   });
 
@@ -17,4 +18,13 @@ export default async function createSoapClient(options: SoapModuleOptions): Prom
   }
 
   return client;
+}
+
+export function concatImports(options: SoapModuleAsyncOptions[]): ModuleMetadata['imports'] {
+  type importsType = ModuleMetadata['imports'];
+
+  return options.reduce((previous, { imports }): importsType => {
+    if (imports) return previous.concat(imports);
+    return previous;
+  }, []);
 }

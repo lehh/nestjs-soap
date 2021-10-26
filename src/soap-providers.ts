@@ -1,7 +1,7 @@
 import { FactoryProvider, Provider, Type } from '@nestjs/common';
 import { Client } from 'soap';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
-import createSoapClient from './soap-utils';
+import { createSoapClient } from './soap-utils';
 import {
   SoapModuleAsyncOptions,
   SoapModuleOptions,
@@ -10,7 +10,7 @@ import {
 
 const buildProvider = (soapOption: SoapModuleOptions): FactoryProvider => ({
   provide: soapOption.name,
-  useFactory: (): Promise<Client> => createSoapClient(soapOption)
+  useFactory: (): Promise<Client> => createSoapClient(soapOption),
 });
 
 export const buildProvidersAsync = (soapOptions: SoapModuleOptions[]): FactoryProvider[] =>

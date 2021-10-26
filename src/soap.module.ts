@@ -2,7 +2,7 @@ import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { SoapModuleAsyncOptions, SoapModuleOptions } from './soap-module-options.type';
 import { buildProvidersAsync, createAsyncProviders } from './soap-providers';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
-import createSoapClient from './soap-utils';
+import { createSoapClient, concatImports } from './soap-utils';
 
 @Module({})
 export class SoapModule {
@@ -36,11 +36,13 @@ export class SoapModule {
     const asyncProviders = createAsyncProviders(soapOptions);
 
     const exports = soapOptions.map(({ name }) => name);
+    const imports = concatImports(soapOptions);
 
     return {
       module: SoapModule,
       exports,
       providers: [...asyncProviders, ...providers],
+      imports,
     };
   }
 }
