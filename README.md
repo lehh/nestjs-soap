@@ -14,7 +14,13 @@ Or, if you use yarn
 yarn add nestjs-soap
 ```
 
-## How to use
+## Documentation
+
+### [Upgrading to v2](./docs/upgrading-to-v2.md)
+### [v1 docs](./docs/v1.md)
+
+## Getting Started
+
 After installing the package, just import the SoapModule on the module you want to use the soap client.  
 
 ```javascript
@@ -23,27 +29,28 @@ import { SoapModule } from 'nestjs-soap';
 
 @Module({
   imports: [
-    SoapModule.registerAsync([
-      { name: 'MY_SOAP_CLIENT', uri: 'http://yourserver/yourservice.wso?wsdl' },
-    ]),
+    SoapModule.register(
+      { clientName: 'MY_SOAP_CLIENT', uri: 'http://yourserver/yourservice.wso?wsdl' },
+    ),
   ],
 })
 export class ExampleModule {}
 ```
-The `registerAsync` or `forRoot` function receives an array of [SoapModuleOptions](#SoapModuleOptions). This means you can create as many clients you need. You just need to create unique names for each one.
+The `register` or `forRoot` function receives a [SoapModuleOptions](#SoapModuleOptions) object. You can register as many clients as you need, each with an unique `clientName`.
 
-Another way to import the SoapModule is using `forRootAsync`, like other [factory provider](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory). Our factory function can be `async` and can inject dependencies through `inject`:
+Another way to import the SoapModule is using `forRootAsync` or `registerAsync`, like other [factory provider](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory). It receives a [SoapModuleAsyncOptions](#SoapModuleOptions) object. Our factory function can be `async` and can inject dependencies through `inject`:
 
 ```javascript
 import { Module } from '@nestjs/common';
 import { SoapModule, SoapModuleOptions } from 'nestjs-soap';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService, ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    SoapModule.forRootAsync([
+    SoapModule.forRootAsync(
       { 
-        name: 'MY_SOAP_CLIENT',
+        clientName: 'MY_SOAP_CLIENT',
+        imports: [ConfigModule],
         inject: [ConfigService],
         useFactory: async (
           configService: ConfigService,
@@ -55,14 +62,14 @@ import { ConfigService } from '@nestjs/config';
           },
         }),        
       }
-    ]),
+    ),
   ],
 })
 export class ExampleModule {}
 ```
 
 
-Then inject the client where you want to use it.
+Then, inject the client where you want to use it.
 ```javascript
 import { Inject, Injectable } from '@nestjs/common';
 import { Client } from 'nestjs-soap';
@@ -87,7 +94,7 @@ You can also create your own factory implemeting SoapModuleOptionsFactory
 ```typescript
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SoapModuleOptions, SoapModuleOptionsFactory } from 'nestjs-soap';
+import { SoapModuleOptionsFactory, SoapModuleOptionsFactoryType } from 'nestjs-soap';
 
 @Injectable()
 export class ExampleSoapConfigService implements SoapModuleOptionsFactory {
@@ -95,7 +102,7 @@ export class ExampleSoapConfigService implements SoapModuleOptionsFactory {
     @Inject(ConfigService) private readonly configService: ConfigService
   )
 
-  createSoapModuleOptions(): SoapModuleOptions {
+  createSoapModuleOptions(): SoapModuleOptionsFactoryType {
     return {
       uri: configService.get<string>('soap.uri'),
       auth: {
@@ -106,12 +113,43 @@ export class ExampleSoapConfigService implements SoapModuleOptionsFactory {
   }
 }
 ```
+Then, import it using `useClass` or `useExisting`:
+```typescript
+import { Module } from '@nestjs/common';
+import { SoapModule, SoapModuleOptions } from 'nestjs-soap';
+import { ExampleSoapConfigService } from './example-config'
 
+@Module({
+  imports: [
+    SoapModule.forRootAsync(
+      { 
+        clientName: 'MY_SOAP_CLIENT',
+        useClass: ExampleSoapConfigService        
+      }
+    ),
+  ],
+})
+export class ExampleModule {}
+```
+Note: for the `useExisting` provider you need to import the module containing the `ExampleSoapConfigService` provider.
 ### SoapModuleOptions
-`name`: The unique client name for class injection.
+`clientName`: The unique client name for class injection.
 
 `uri`: The SOAP service uri.
 
 `auth`: Basic authentication filling in the `username` and `password` fields when needed.
  
 `clientOptions`: The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options) .
+
+### SoapModuleAsyncOptions
+`clientName`: The unique client name for class injection.
+
+`inject`: Array of dependencies to be injected.
+
+`useClass`: A class implementing `SoapModuleOptionsFactory`.
+
+`useExisting`: An injectable class implementing `SoapModuleOptionsFactory`.
+
+`useFactory`: A factory function returning a [SoapModuleOptions](#SoapModuleOptions) object.
+
+`imports`: Array of modules containing the injected dependencies.
