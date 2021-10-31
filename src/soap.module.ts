@@ -1,48 +1,57 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { SoapModuleAsyncOptions, SoapModuleOptions } from './soap-module-options.type';
-import { buildProvidersAsync, createAsyncProviders } from './soap-providers';
+import { buildAsyncProviders, buildClientProvider } from './soap-providers';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
-import { createSoapClient, concatImports } from './soap-utils';
+import { SoapService } from './soap.service';
 
-@Module({})
+@Module({
+  providers: [SoapService],
+  exports: [SoapService],
+})
 export class SoapModule {
-  static registerAsync(soapOptions: SoapModuleOptions[]): DynamicModule {
-    const providers = buildProvidersAsync(soapOptions);
+  static register(soapOptions: SoapModuleOptions): DynamicModule {
+    return this.buildDynamicModule(soapOptions);
+  }
+
+  static forRoot(soapOptions: SoapModuleOptions): DynamicModule {
+    return this.buildDynamicModule(soapOptions);
+  }
+
+  static registerAsync(soapOptions: SoapModuleAsyncOptions): DynamicModule {
+    return this.buildAsyncDynamicModule(soapOptions);
+  }
+
+  static forRootAsync(soapOptions: SoapModuleAsyncOptions): DynamicModule {
+    return this.buildAsyncDynamicModule(soapOptions);
+  }
+
+  private static buildDynamicModule(soapOptions: SoapModuleOptions): DynamicModule {
+    const clientProvider = buildClientProvider(soapOptions.clientName);
+    const optionsProvider = {
+      provide: SOAP_MODULE_OPTIONS,
+      useValue: soapOptions,
+    };
 
     return {
       module: SoapModule,
-      providers: [...providers],
-      exports: [...providers],
+      providers: [
+        optionsProvider,
+        clientProvider,
+        SoapService,
+      ],
+      exports: [clientProvider, SoapService],
     };
   }
 
-  static forRoot(soapOptions: SoapModuleOptions[]): DynamicModule {
-    const providers = buildProvidersAsync(soapOptions);
+  private static buildAsyncDynamicModule(soapOptions: SoapModuleAsyncOptions): DynamicModule {
+    const clientProvider = buildClientProvider(soapOptions.clientName);
+    const asyncOptionsProviders = buildAsyncProviders(soapOptions);
 
     return {
       module: SoapModule,
-      providers: [...providers],
-      exports: [...providers],
-    };
-  }
-
-  static forRootAsync(soapOptions: SoapModuleAsyncOptions[]): DynamicModule {
-    const providers: Provider[] = soapOptions.map((soapOption) => ({
-      inject: [SOAP_MODULE_OPTIONS + soapOption.name],
-      provide: soapOption.name,
-      useFactory: (options: SoapModuleOptions) => createSoapClient(options),
-    }));
-
-    const asyncProviders = createAsyncProviders(soapOptions);
-
-    const exports = soapOptions.map(({ name }) => name);
-    const imports = concatImports(soapOptions);
-
-    return {
-      module: SoapModule,
-      exports,
-      providers: [...asyncProviders, ...providers],
-      imports,
+      providers: [...asyncOptionsProviders, clientProvider, SoapService],
+      exports: [...asyncOptionsProviders, clientProvider, SoapService],
+      imports: soapOptions.imports || [],
     };
   }
 }

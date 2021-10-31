@@ -1,35 +1,24 @@
 import { FactoryProvider, Provider, Type } from '@nestjs/common';
-import { Client } from 'soap';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
-import { createSoapClient } from './soap-utils';
-import {
-  SoapModuleAsyncOptions,
-  SoapModuleOptions,
-  SoapModuleOptionsFactory,
-} from './soap-module-options.type';
+import { SoapModuleAsyncOptions, SoapModuleOptionsFactory } from './soap-module-options.type';
+import { SoapService } from './soap.service';
 
-const buildProvider = (soapOption: SoapModuleOptions): FactoryProvider => ({
-  provide: soapOption.name,
-  useFactory: (): Promise<Client> => createSoapClient(soapOption),
+export const buildClientProvider = (clientName: string): FactoryProvider => ({
+  provide: clientName,
+  useFactory: async (soapService: SoapService) => {
+    return await soapService.createAsyncClient();
+  },
+  inject: [SoapService],
 });
 
-export const buildProvidersAsync = (soapOptions: SoapModuleOptions[]): FactoryProvider[] =>
-  soapOptions.map(buildProvider);
+export const buildAsyncProviders = (soapAsyncOptions: SoapModuleAsyncOptions): Provider[] => {
+  const { useClass, useExisting, useFactory } = soapAsyncOptions;
 
-export const createAsyncProviders = (options: SoapModuleAsyncOptions[]): Provider[] => {
-  const asyncProviders: Provider[] = [];
+  if (useClass) return createUseClassProvider(soapAsyncOptions);
+  if (useExisting) return createUseExistingProvider(soapAsyncOptions);
+  if (useFactory) return createUseFactoryProvider(soapAsyncOptions);
 
-  for (let option of options) {
-    asyncProviders.push(...createAsyncProvider(option));
-  }
-
-  return asyncProviders;
-};
-
-const createAsyncProvider = (option: SoapModuleAsyncOptions): Provider[] => {
-  if (option.useClass) return createUseClassProvider(option);
-  if (option.useExisting) return createUseExistingProvider(option);
-  if (option.useFactory) return createUseFactoryProvider(option);
+  throw new Error('[SoapModule]: useClass, useExisting or useFactory must be filled when using async options.');
 };
 
 const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {
@@ -37,7 +26,7 @@ const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {
 
   return [
     {
-      provide: SOAP_MODULE_OPTIONS + option.name,
+      provide: SOAP_MODULE_OPTIONS,
       useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
         await optionsFactory.createSoapModuleOptions(),
       inject: [useClass],
@@ -52,7 +41,7 @@ const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {
 const createUseExistingProvider = (option: SoapModuleAsyncOptions): Provider[] => {
   return [
     {
-      provide: SOAP_MODULE_OPTIONS + option.name,
+      provide: SOAP_MODULE_OPTIONS,
       useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
         await optionsFactory.createSoapModuleOptions(),
       inject: [option.useExisting],
@@ -63,7 +52,7 @@ const createUseExistingProvider = (option: SoapModuleAsyncOptions): Provider[] =
 const createUseFactoryProvider = (option: SoapModuleAsyncOptions): Provider[] => {
   return [
     {
-      provide: SOAP_MODULE_OPTIONS + option.name,
+      provide: SOAP_MODULE_OPTIONS,
       useFactory: option.useFactory,
       inject: option.inject || [],
     },

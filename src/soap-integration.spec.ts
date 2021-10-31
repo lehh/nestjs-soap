@@ -8,7 +8,7 @@ import { SoapModule } from './';
 describe('SoapModule (integration)', () => {
   const MY_SOAP_URI = 'http://my.soap.websl';
 
-  describe("forRoot", () => {
+  describe("Dynamic modules", () => {
     const MY_SOAP_CLIENT_REGISTER = 'MY_SOAP_CLIENT_REGISTER';
     const MY_SOAP_CLIENT_FOR_ROOT = 'MY_SOAP_CLIENT_FOR_ROOT';
     let app: INestApplication;
@@ -25,22 +25,22 @@ describe('SoapModule (integration)', () => {
         // @ts-ignore
         Promise.resolve({
           setSecurity: jest.fn(),
-          client: "REGISTER_ASYNC"
+          client: "REGISTER"
         })
       );
 
       const moduleFixture = await Test.createTestingModule({
         imports: [
-          SoapModule.forRoot([
+          SoapModule.forRoot(
             {
-              name: MY_SOAP_CLIENT_FOR_ROOT,
+              clientName: MY_SOAP_CLIENT_FOR_ROOT,
               uri: MY_SOAP_URI
-            },
-            {
-              name: MY_SOAP_CLIENT_REGISTER,
-              uri: MY_SOAP_URI
-            },
-          ]),
+            }
+          ),
+          SoapModule.register({
+            clientName: MY_SOAP_CLIENT_REGISTER,
+            uri: MY_SOAP_URI
+          })
         ],
       })
       .compile();
@@ -61,16 +61,16 @@ describe('SoapModule (integration)', () => {
       )
     });
   
-    test('should be able to get the soapClient using registerAsync', async () => {
+    test('should be able to get the soapClient using register', async () => {
       expect(app.get(MY_SOAP_CLIENT_REGISTER)).toEqual(
         expect.objectContaining({
-          client: "REGISTER_ASYNC"
+          client: "REGISTER"
         })
       )
     });
   })
 
-  describe("forRootAsync", () => {
+  describe("Asynchronous dynamic modules", () => {
     let app: INestApplication;
     
     // use a config service to test the forRootAsync
@@ -93,20 +93,34 @@ describe('SoapModule (integration)', () => {
 
       const moduleFixture = await Test.createTestingModule({
         imports: [
-          SoapModule.forRootAsync([
+          SoapModule.forRootAsync(
             {
               useClass: MySoapClientForRootAsyncConfig,
-              name: "MY_CONNECTION"
+              clientName: "MY_USE_CLASS_FOR_ROOT_CONNECTION"
             },
-          ]),
-          SoapModule.forRootAsync([
+          ),
+          SoapModule.forRootAsync(
             {
               useFactory: () => ({
                 uri: 'my.wsdl.uri'
               }),
-              name: "MY_FACTORY_CONNECTION"
+              clientName: "MY_FACTORY_FOR_ROOT_CONNECTION"
             },
-          ]),
+          ),
+          SoapModule.registerAsync(
+            {
+              useClass: MySoapClientForRootAsyncConfig,
+              clientName: "MY_USE_CLASS_REGISTER_CONNECTION"
+            },
+          ),
+          SoapModule.registerAsync(
+            {
+              useFactory: () => ({
+                uri: 'my.wsdl.uri'
+              }),
+              clientName: "MY_FACTORY_REGISTER_CONNECTION"
+            },
+          ),
         ],
       })
       .compile();
@@ -120,7 +134,7 @@ describe('SoapModule (integration)', () => {
     });
   
     test('should be able to get the client using forRootAsync useClass', async () => {
-      expect(app.get("MY_CONNECTION")).toEqual(
+      expect(app.get("MY_USE_CLASS_FOR_ROOT_CONNECTION")).toEqual(
         expect.objectContaining({
           client: "FOR_ROOT_ASYNC"
         })
@@ -128,7 +142,23 @@ describe('SoapModule (integration)', () => {
     });
 
     test('should be able to get the client using forRootAsync useFactory', async () => {
-      expect(app.get("MY_FACTORY_CONNECTION")).toEqual(
+      expect(app.get("MY_FACTORY_FOR_ROOT_CONNECTION")).toEqual(
+        expect.objectContaining({
+          client: "FOR_ROOT_ASYNC"
+        })
+      )
+    });
+
+    test('should be able to get the client using registerAsync useClass', async () => {
+      expect(app.get("MY_USE_CLASS_REGISTER_CONNECTION")).toEqual(
+        expect.objectContaining({
+          client: "FOR_ROOT_ASYNC"
+        })
+      )
+    });
+
+    test('should be able to get the client using registerAsync useFactory', async () => {
+      expect(app.get("MY_FACTORY_REGISTER_CONNECTION")).toEqual(
         expect.objectContaining({
           client: "FOR_ROOT_ASYNC"
         })
