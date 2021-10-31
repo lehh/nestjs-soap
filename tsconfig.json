@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "target": "es6",
-    "sourceMap": false,
+    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",

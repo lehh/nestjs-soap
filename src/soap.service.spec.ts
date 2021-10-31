@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SoapService } from './soap.service';
 import { mocked } from 'ts-jest/utils';
 import { Client, createClientAsync } from 'soap';
-import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { SoapModuleOptions } from 'src';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
 import { ServiceUnavailableException } from '@nestjs/common';
