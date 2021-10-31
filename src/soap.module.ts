@@ -27,14 +27,15 @@ export class SoapModule {
 
   private static buildDynamicModule(soapOptions: SoapModuleOptions): DynamicModule {
     const clientProvider = buildClientProvider(soapOptions.clientName);
+    const optionsProvider = {
+      provide: SOAP_MODULE_OPTIONS,
+      useValue: soapOptions,
+    };
 
     return {
       module: SoapModule,
       providers: [
-        {
-          provide: SOAP_MODULE_OPTIONS,
-          useValue: soapOptions,
-        },
+        optionsProvider,
         clientProvider,
         SoapService,
       ],
@@ -44,12 +45,12 @@ export class SoapModule {
 
   private static buildAsyncDynamicModule(soapOptions: SoapModuleAsyncOptions): DynamicModule {
     const clientProvider = buildClientProvider(soapOptions.clientName);
-    const asyncProviders = buildAsyncProviders(soapOptions);
+    const asyncOptionsProviders = buildAsyncProviders(soapOptions);
 
     return {
       module: SoapModule,
-      providers: [...asyncProviders, clientProvider, SoapService],
-      exports: [...asyncProviders, clientProvider, SoapService],
+      providers: [...asyncOptionsProviders, clientProvider, SoapService],
+      exports: [...asyncOptionsProviders, clientProvider, SoapService],
       imports: soapOptions.imports || [],
     };
   }
