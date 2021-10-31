@@ -1,4 +1,4 @@
-import { SoapModuleOptions, SoapModuleAsyncOptions } from './soap-module-options.type';
+import { SoapModuleOptions, SoapModuleAsyncOptions, SoapModuleOptionsFactory } from './soap-module-options.type';
 import { buildAsyncProviders, buildClientProvider } from './soap-providers';
 import { FactoryProvider } from '@nestjs/common';
 
@@ -15,35 +15,39 @@ describe('SoapProviders', () => {
 
   beforeEach(() => {
     soapOptions = {
-      name: 'myclient',
+      clientName: 'myclient',
       uri: 'http://efgh.com',
       clientOptions: { disableCache: true },
     } as SoapModuleOptions;
 
+    const optionsFactory = {
+      createSoapModuleOptions: () => soapOptions
+    } as SoapModuleOptionsFactory;
+
     soapOptionsAsync = [
       {
-        name: 'first',
+        clientName: 'first',
         useFactory: () => ({
           uri: 'http://abcd.com',
         }),
       },
       {
-        name: 'second',
-        useClass: 'SoapClientSecond',
+        clientName: 'second',
+        useClass: optionsFactory,
       },
       {
-        name: 'third',
-        useExisting: 'SoapClientThird',
+        clientName: 'third',
+        useExisting: optionsFactory,
       },
     ] as SoapModuleAsyncOptions[];
   });
 
   describe('buildClientProvider', () => {
     it('Should create soap async client provider', () => {
-      const result = buildClientProvider(soapOptions.name);
+      const result = buildClientProvider(soapOptions.clientName);
 
       const expectedResult = {
-        provide: soapOptions.name,
+        provide: soapOptions.clientName,
         useFactory: async (soapService: SoapService) => {
           return await soapService.createAsyncClient();
         },

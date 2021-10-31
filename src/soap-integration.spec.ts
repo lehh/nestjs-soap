@@ -33,12 +33,12 @@ describe('SoapModule (integration)', () => {
         imports: [
           SoapModule.forRoot(
             {
-              name: MY_SOAP_CLIENT_FOR_ROOT,
+              clientName: MY_SOAP_CLIENT_FOR_ROOT,
               uri: MY_SOAP_URI
             }
           ),
           SoapModule.register({
-            name: MY_SOAP_CLIENT_REGISTER,
+            clientName: MY_SOAP_CLIENT_REGISTER,
             uri: MY_SOAP_URI
           })
         ],
@@ -96,7 +96,7 @@ describe('SoapModule (integration)', () => {
           SoapModule.forRootAsync(
             {
               useClass: MySoapClientForRootAsyncConfig,
-              name: "MY_USE_CLASS_FOR_ROOT_CONNECTION"
+              clientName: "MY_USE_CLASS_FOR_ROOT_CONNECTION"
             },
           ),
           SoapModule.forRootAsync(
@@ -104,13 +104,13 @@ describe('SoapModule (integration)', () => {
               useFactory: () => ({
                 uri: 'my.wsdl.uri'
               }),
-              name: "MY_FACTORY_FOR_ROOT_CONNECTION"
+              clientName: "MY_FACTORY_FOR_ROOT_CONNECTION"
             },
           ),
           SoapModule.registerAsync(
             {
               useClass: MySoapClientForRootAsyncConfig,
-              name: "MY_USE_CLASS_REGISTER_CONNECTION"
+              clientName: "MY_USE_CLASS_REGISTER_CONNECTION"
             },
           ),
           SoapModule.registerAsync(
@@ -118,7 +118,7 @@ describe('SoapModule (integration)', () => {
               useFactory: () => ({
                 uri: 'my.wsdl.uri'
               }),
-              name: "MY_FACTORY_REGISTER_CONNECTION"
+              clientName: "MY_FACTORY_REGISTER_CONNECTION"
             },
           ),
         ],

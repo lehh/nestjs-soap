@@ -1,1 +1,1 @@
-export const SOAP_MODULE_OPTIONS = 'SoapConfigOptions';
+export const SOAP_MODULE_OPTIONS = 'SOAP_MODULE_OPTIONS';
