@@ -143,7 +143,7 @@ Note: for the `useExisting` provider you need to import the module containing th
 
 `auth`: Basic authentication filling in the `username` and `password` fields when needed.
  
-`clientOptions`: The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options) .
+`clientOptions`: The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options).
 
 ### SoapModuleAsyncOptions
 `clientName`: The unique client name for class injection.
