@@ -17,6 +17,8 @@ export const buildAsyncProviders = (soapAsyncOptions: SoapModuleAsyncOptions): P
   if (useClass) return createUseClassProvider(soapAsyncOptions);
   if (useExisting) return createUseExistingProvider(soapAsyncOptions);
   if (useFactory) return createUseFactoryProvider(soapAsyncOptions);
+
+  throw new Error('[SoapModule]: useClass, useExisting or useFactory must be filled when using async options.');
 };
 
 const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {
