@@ -1,3 +1,7 @@
+<a href="https://www.npmjs.com/nestjs-soap" target="_blank"><img src="https://img.shields.io/npm/v/nestjs-soap.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/nestjs-soap" target="_blank"><img src="https://img.shields.io/npm/l/nestjs-soap.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/nestjs-soap" target="_blank"><img src="https://img.shields.io/npm/dm/nestjs-soap.svg" alt="NPM Downloads" /></a>
+
 # Nestjs Soap
 
 Nestjs module wrapper for soap
