@@ -1,4 +1,4 @@
-import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SoapModuleOptions } from './soap-module-options.type';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
 import { BasicAuthSecurity, Client, createClientAsync, ISecurity } from 'soap';
@@ -10,19 +10,28 @@ export class SoapService {
   async createAsyncClient(): Promise<Client> {
     const options = this.soapModuleOptions;
 
-    const client = await createClientAsync(options.uri, options.clientOptions)?.catch((err) => {
-      throw new ServiceUnavailableException(err);
-    });
+    try {
+      const client = await createClientAsync(options.uri, options.clientOptions);
 
-    if (!options.auth) return client;
+      if (!options.auth) return client;
 
-    const basicAuth: ISecurity = new BasicAuthSecurity(
-      options.auth.username,
-      options.auth.password,
-    );
+      const basicAuth: ISecurity = new BasicAuthSecurity(
+        options.auth.username,
+        options.auth.password,
+      );
 
-    client.setSecurity(basicAuth);
+      client.setSecurity(basicAuth);
 
-    return client;
+      return client;
+
+    } catch (err) {
+      const logger = new Logger('SoapModule');
+
+      logger.error(
+        `${err.message} \n - An error occurred while creating the soap client. Check the SOAP service URL and status.`,
+      );
+
+      return null;
+    }
   }
 }

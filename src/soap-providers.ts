@@ -5,9 +5,7 @@ import { SoapService } from './soap.service';
 
 export const buildClientProvider = (clientName: string): FactoryProvider => ({
   provide: clientName,
-  useFactory: async (soapService: SoapService) => {
-    return await soapService.createAsyncClient();
-  },
+  useFactory: async (soapService: SoapService) => await soapService.createAsyncClient(),
   inject: [SoapService],
 });
 
@@ -18,7 +16,9 @@ export const buildAsyncProviders = (soapAsyncOptions: SoapModuleAsyncOptions): P
   if (useExisting) return createUseExistingProvider(soapAsyncOptions);
   if (useFactory) return createUseFactoryProvider(soapAsyncOptions);
 
-  throw new Error('[SoapModule]: useClass, useExisting or useFactory must be filled when using async options.');
+  throw new Error(
+    '[SoapModule]: useClass, useExisting or useFactory must be filled when using async options.',
+  );
 };
 
 const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {

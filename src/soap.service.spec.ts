@@ -5,7 +5,6 @@ import { Client, createClientAsync } from 'soap';
 import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { SoapModuleOptions } from 'src';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
-import { ServiceUnavailableException } from '@nestjs/common';
 
 const soapModuleOptionsMock = {
   uri: 'some-uri',
@@ -46,10 +45,10 @@ describe('SoapService', () => {
       clientMock.setSecurity = jest.fn();
     });
 
-    it('Should throw service unavailable on connection issue', () => {
+    it('Should return null on connection issue', () => {
       soapCreateClientAsyncMock.mockRejectedValue('some error');
 
-      return expect(service.createAsyncClient()).rejects.toThrowError(ServiceUnavailableException);
+      return expect(service.createAsyncClient()).resolves.toBeNull();
     });
 
     it('Should create client with soap options data', async () => {

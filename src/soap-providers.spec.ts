@@ -1,4 +1,8 @@
-import { SoapModuleOptions, SoapModuleAsyncOptions, SoapModuleOptionsFactory } from './soap-module-options.type';
+import {
+  SoapModuleOptions,
+  SoapModuleAsyncOptions,
+  SoapModuleOptionsFactory,
+} from './soap-module-options.type';
 import { buildAsyncProviders, buildClientProvider } from './soap-providers';
 import { FactoryProvider } from '@nestjs/common';
 
@@ -21,7 +25,7 @@ describe('SoapProviders', () => {
     } as SoapModuleOptions;
 
     const optionsFactory = {
-      createSoapModuleOptions: () => soapOptions
+      createSoapModuleOptions: () => soapOptions,
     } as SoapModuleOptionsFactory;
 
     soapOptionsAsync = [
@@ -103,6 +107,12 @@ describe('SoapProviders', () => {
       ];
 
       expect(result).toEqual(expectedResult);
+    });
+
+    it('Should throw error when no option is provided', () => {
+      const options = { clientName: 'Test' };
+
+      return expect(() => buildAsyncProviders(options)).toThrowError();
     });
   });
 });
