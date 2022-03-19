@@ -87,7 +87,7 @@ export class ExampleService {
 
 ```
 
-The injected Client is from the soap npm package. This example is using the [soap method async](https://www.npmjs.com/package/soap#clientmethodasyncargs-options---call-method-on-the-soap-service) from soap package. From here, please follow the client use instructions on the [soap repository](https://www.npmjs.com/package/soap).
+The injected Client is from the soap npm package. This example is using the [soap method async](https://www.npmjs.com/package/soap#clientmethodasyncargs-options---call-method-on-the-soap-service) from soap package. From here, please follow the [Client](https://www.npmjs.com/package/soap#client) use instructions on the soap repository.
 
 ### Soap Module Factory
 
