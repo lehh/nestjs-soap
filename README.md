@@ -4,9 +4,7 @@
 
 # Nestjs Soap
 
-Nestjs module wrapper for soap
-
-This package internally uses [soap](https://www.npmjs.com/package/soap) npm package
+### Nestjs module wrapper for [soap](https://www.npmjs.com/package/soap) npm package 
 
 ## Install
 
@@ -89,7 +87,7 @@ export class ExampleService {
 
 ```
 
-The injected Client is from the soap npm package. From here, please follow the use instructions on the [soap repository](https://www.npmjs.com/package/soap).
+The injected Client is from the soap npm package. This example is using the [soap method async](https://www.npmjs.com/package/soap#clientmethodasyncargs-options---call-method-on-the-soap-service) from soap package. From here, please follow the client use instructions on the [soap repository](https://www.npmjs.com/package/soap).
 
 ### Soap Module Factory
 
