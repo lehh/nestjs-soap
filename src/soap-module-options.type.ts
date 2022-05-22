@@ -4,14 +4,31 @@ import { ModuleMetadata, Type } from '@nestjs/common';
 export { Client, IOptions } from 'soap';
 
 export type BasicAuth = {
+  type?: string
   username: string;
   password: string;
+};
+
+export type WSSecurityType = {
+  type: string
+  username: string;
+  password: string;
+  options?: string;
+};
+
+export type WSSecurityOptions = {
+  passwordType?: string;
+  hasTimeStamp?: boolean;
+  hasTokenCreated?: boolean;
+  hasNonce?: boolean;
+  mustUnderstand?: boolean,
+  actor?: string;
 };
 
 export type SoapModuleOptions = {
   uri: string;
   clientName: string;
-  auth?: BasicAuth;
+  auth?: BasicAuth | WSSecurityType;
   clientOptions?: IOptions;
 };
 

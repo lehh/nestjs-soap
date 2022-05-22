@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SoapService } from './soap.service';
 import { mocked } from 'ts-jest/utils';
-import { Client, createClientAsync } from 'soap';
+import { BasicAuthSecurity, Client, createClientAsync, WSSecurity } from 'soap';
 import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { SoapModuleOptions } from 'src';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
@@ -79,6 +79,40 @@ describe('SoapService', () => {
       await service.createAsyncClient();
 
       expect(clientMock.setSecurity).toBeCalled();
+    });
+
+    it('Should use BasicAuthSecurity if auth.type is not defined', async () => {
+      soapCreateClientAsyncMock.mockResolvedValue(clientMock);
+
+      await service.createAsyncClient();
+
+      expect(clientMock.setSecurity).toBeCalledWith(expect.any(BasicAuthSecurity));
+    });
+
+    it('Should use BasicAuthSecurity if auth.type is Basic', async () => {
+      const auth = soapModuleOptionsMock.auth;
+      service.soapModuleOptions.auth.type = 'Basic';
+      
+      soapCreateClientAsyncMock.mockResolvedValue(clientMock);
+
+      await service.createAsyncClient();
+
+      expect(clientMock.setSecurity).toBeCalledWith(expect.any(BasicAuthSecurity));
+      
+      soapModuleOptionsMock.auth = auth;
+    });
+
+    it('Should use WSSecurity if auth.type is WSSecurity', async () => {
+      const auth = soapModuleOptionsMock.auth;
+      service.soapModuleOptions.auth.type = 'WSSecurity';
+      
+      soapCreateClientAsyncMock.mockResolvedValue(clientMock);
+
+      await service.createAsyncClient();
+
+      expect(clientMock.setSecurity).toBeCalledWith(expect.any(WSSecurity));
+      
+      soapModuleOptionsMock.auth = auth;
     });
 
     it('Should return client', async () => {
