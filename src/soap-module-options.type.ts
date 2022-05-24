@@ -1,20 +1,20 @@
 import { IOptions } from 'soap';
 import { ModuleMetadata, Type } from '@nestjs/common';
+import { BASIC_AUTH, WSSECURITY_AUTH } from './soap-constants';
 
 export { Client, IOptions } from 'soap';
 
-export type BasicAuth = {
-  type?: string
+interface Auth {
+  type: typeof BASIC_AUTH | typeof WSSECURITY_AUTH;
   username: string;
   password: string;
-};
+}
 
-export type WSSecurityType = {
-  type: string
-  username: string;
-  password: string;
-  options?: WSSecurityOptions;
-};
+export interface BasicAuth extends Auth { }
+
+export interface WSSecurityAuth extends Auth {
+  options?: WSSecurityOptions
+}
 
 export type WSSecurityOptions = {
   passwordType?: string;
@@ -28,7 +28,7 @@ export type WSSecurityOptions = {
 export type SoapModuleOptions = {
   uri: string;
   clientName: string;
-  auth?: BasicAuth | WSSecurityType;
+  auth?: BasicAuth | WSSecurityAuth;
   clientOptions?: IOptions;
 };
 

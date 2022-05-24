@@ -4,7 +4,7 @@ import { mocked } from 'ts-jest/utils';
 import { BasicAuthSecurity, Client, createClientAsync, WSSecurity } from 'soap';
 import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { SoapModuleOptions } from 'src';
-import { SOAP_MODULE_OPTIONS } from './soap-constants';
+import { BASIC_AUTH, SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
 
 const soapModuleOptionsMock = {
   uri: 'some-uri',
@@ -89,9 +89,9 @@ describe('SoapService', () => {
       expect(clientMock.setSecurity).toBeCalledWith(expect.any(BasicAuthSecurity));
     });
 
-    it('Should use BasicAuthSecurity if auth.type is Basic', async () => {
+    it('Should use BasicAuthSecurity if auth.type is BASIC_AUTH', async () => {
       const auth = soapModuleOptionsMock.auth;
-      service.soapModuleOptions.auth.type = 'Basic';
+      service.soapModuleOptions.auth.type = BASIC_AUTH;
       
       soapCreateClientAsyncMock.mockResolvedValue(clientMock);
 
@@ -102,9 +102,9 @@ describe('SoapService', () => {
       soapModuleOptionsMock.auth = auth;
     });
 
-    it('Should use WSSecurity if auth.type is WSSecurity', async () => {
+    it('Should use WSSecurity if auth.type is WSSECURITY_AUTH', async () => {
       const auth = soapModuleOptionsMock.auth;
-      service.soapModuleOptions.auth.type = 'WSSecurity';
+      service.soapModuleOptions.auth.type = WSSECURITY_AUTH;
       
       soapCreateClientAsyncMock.mockResolvedValue(clientMock);
 

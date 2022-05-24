@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { SoapModuleOptions, WSSecurityType } from './soap-module-options.type';
-import { SOAP_MODULE_OPTIONS } from './soap-constants';
+import { SoapModuleOptions, WSSecurityAuth } from './soap-module-options.type';
+import { SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
 import { BasicAuthSecurity, Client, createClientAsync, ISecurity, WSSecurity } from 'soap';
 
 @Injectable()
@@ -17,8 +17,8 @@ export class SoapService {
 
       const {username, password} = options.auth;
 
-      const authMethod: ISecurity = options.auth.type === 'WSSecurity'
-        ? new WSSecurity(username, password, (options.auth as WSSecurityType).options)
+      const authMethod: ISecurity = options.auth.type === WSSECURITY_AUTH
+        ? new WSSecurity(username, password, (options.auth as WSSecurityAuth).options)
         : new BasicAuthSecurity(username, password);
 
       client.setSecurity(authMethod);
