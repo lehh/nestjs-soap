@@ -13,7 +13,7 @@ export type WSSecurityType = {
   type: string
   username: string;
   password: string;
-  options?: string;
+  options?: WSSecurityOptions;
 };
 
 export type WSSecurityOptions = {
