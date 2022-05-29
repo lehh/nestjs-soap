@@ -59,6 +59,7 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
         ): Promise<SoapModuleOptions> => ({
           uri: configService.get<string>('soap.uri'),
           auth: {
+            type: 'basic',
             username: configService.get<string>('soap.username'),
             password: configService.get<string>('soap.password'),
           },
