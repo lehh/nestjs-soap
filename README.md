@@ -108,6 +108,7 @@ export class ExampleSoapConfigService implements SoapModuleOptionsFactory {
     return {
       uri: configService.get<string>('soap.uri'),
       auth: {
+        type: 'basic',
         username: configService.get<string>('soap.username'),
         password: configService.get<string>('soap.password'),
       },
@@ -139,9 +140,9 @@ Note: for the `useExisting` provider you need to import the module containing th
 
 `uri`: The SOAP service uri.
 
-`auth`: Basic authentication filling in the `username` and `password` fields when needed.
+`auth` (optional): Basic or WSSecurity authentication. Fields `type` (basic or wssecurity), `username` and `password` are required. For the WSSecurity `options` field, refer to [soap-repository](https://www.npmjs.com/package/soap#wssecurity)
  
-`clientOptions`: The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options).
+`clientOptions` (optional): The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options).
 
 ### SoapModuleAsyncOptions
 `clientName`: The unique client name for class injection.
