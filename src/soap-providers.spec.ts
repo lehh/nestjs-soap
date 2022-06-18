@@ -4,7 +4,7 @@ import {
   SoapModuleOptionsFactory,
 } from './soap-module-options.type';
 import { buildAsyncProviders, buildClientProvider } from './soap-providers';
-import { FactoryProvider } from '@nestjs/common';
+import { FactoryProvider, Scope } from '@nestjs/common';
 
 import { createClientAsync } from 'soap';
 import { mocked } from 'ts-jest/utils';
@@ -34,10 +34,12 @@ describe('SoapProviders', () => {
         useFactory: () => ({
           uri: 'http://abcd.com',
         }),
+        scope: Scope.REQUEST
       },
       {
         clientName: 'second',
         useClass: optionsFactory,
+        scope: Scope.TRANSIENT
       },
       {
         clientName: 'third',
@@ -71,6 +73,7 @@ describe('SoapProviders', () => {
           provide: SOAP_MODULE_OPTIONS,
           inject: [],
           useFactory: expect.any(Function),
+          scope: soapOptionsAsync[0].scope,
         },
       ];
 
@@ -85,6 +88,7 @@ describe('SoapProviders', () => {
           provide: SOAP_MODULE_OPTIONS,
           inject: [soapOptionsAsync[1].useClass],
           useFactory: expect.any(Function),
+          scope: soapOptionsAsync[1].scope
         },
         {
           provide: soapOptionsAsync[1].useClass,
@@ -103,6 +107,7 @@ describe('SoapProviders', () => {
           provide: SOAP_MODULE_OPTIONS,
           inject: [soapOptionsAsync[2].useExisting],
           useFactory: expect.any(Function),
+          scope: Scope.DEFAULT
         },
       ];
 
