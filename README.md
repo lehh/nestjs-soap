@@ -157,3 +157,5 @@ Note: for the `useExisting` provider you need to import the module containing th
 `useFactory`: A factory function returning a [SoapModuleOptions](#SoapModuleOptions) object.
 
 `imports`: Array of modules containing the injected dependencies.
+
+`scope`: Injection scope of the injected provider.
