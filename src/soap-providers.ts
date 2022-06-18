@@ -1,4 +1,4 @@
-import { FactoryProvider, Provider, Type } from '@nestjs/common';
+import { FactoryProvider, Provider, Scope, Type } from '@nestjs/common';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
 import { SoapModuleAsyncOptions, SoapModuleOptionsFactory } from './soap-module-options.type';
 import { SoapService } from './soap.service';
@@ -30,6 +30,7 @@ const createUseClassProvider = (option: SoapModuleAsyncOptions): Provider[] => {
       useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
         await optionsFactory.createSoapModuleOptions(),
       inject: [useClass],
+      scope: option.scope || Scope.DEFAULT,
     },
     {
       provide: useClass,
@@ -45,6 +46,7 @@ const createUseExistingProvider = (option: SoapModuleAsyncOptions): Provider[] =
       useFactory: async (optionsFactory: SoapModuleOptionsFactory) =>
         await optionsFactory.createSoapModuleOptions(),
       inject: [option.useExisting],
+      scope: option.scope || Scope.DEFAULT,
     },
   ];
 };
@@ -55,6 +57,7 @@ const createUseFactoryProvider = (option: SoapModuleAsyncOptions): Provider[] =>
       provide: SOAP_MODULE_OPTIONS,
       useFactory: option.useFactory,
       inject: option.inject || [],
+      scope: option.scope || Scope.DEFAULT,
     },
   ];
 };

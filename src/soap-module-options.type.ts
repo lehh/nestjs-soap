@@ -1,5 +1,5 @@
 import { IOptions } from 'soap';
-import { ModuleMetadata, Type } from '@nestjs/common';
+import { ModuleMetadata, Scope, Type } from '@nestjs/common';
 import { BASIC_AUTH, WSSECURITY_AUTH } from './soap-constants';
 
 export { Client, IOptions } from 'soap';
@@ -41,6 +41,7 @@ export interface SoapModuleOptionsFactory {
 export interface SoapModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   clientName: string;
   inject?: any[];
+  scope?: Scope;
   useClass?: Type<SoapModuleOptionsFactory>;
   useExisting?: Type<SoapModuleOptionsFactory>;
   useFactory?: (...args: any[]) => Promise<SoapModuleOptionsFactoryType> | SoapModuleOptionsFactoryType;
