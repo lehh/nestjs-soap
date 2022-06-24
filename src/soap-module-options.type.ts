@@ -1,5 +1,5 @@
 import { IOptions } from 'soap';
-import { ModuleMetadata, Scope, Type } from '@nestjs/common';
+import { ModuleMetadata, Scope, Type } from '@nestjs/common/interfaces';
 import { BASIC_AUTH, WSSECURITY_AUTH } from './soap-constants';
 
 export { Client, IOptions } from 'soap';
