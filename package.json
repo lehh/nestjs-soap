@@ -4,6 +4,9 @@
   "description": "Nestjs module wrapper for soap",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "files": [
     "dist/**/*",
     "*.md"
@@ -41,7 +44,7 @@
     "@nestjs/common": "^6.10.0 || ^7.0.0 || ^8.0.0"
   },
   "dependencies": {
-    "soap": "^0.42.0"
+    "soap": "^0.45.0"
   },
   "devDependencies": {
     "@nestjs/common": "^8.0.0",
