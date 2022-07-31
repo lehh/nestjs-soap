@@ -4,7 +4,13 @@
 
 # Nestjs Soap
 
-### Nestjs module wrapper for [soap](https://www.npmjs.com/package/soap) npm package 
+### Nestjs module wrapper for [soap](https://www.npmjs.com/package/soap) npm package
+
+## Compatibility
+
+For nestjs < v8.4.0 use v2 package.
+
+For nestjs >= v8.4.0 use v3 package.
 
 ## Install
 
