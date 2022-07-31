@@ -41,7 +41,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "peerDependencies": {
-    "@nestjs/common": "^6.10.0 || ^7.0.0 || ~8.3.1"
+    "@nestjs/common": ">=6.10.0 <=8.3.1"
   },
   "dependencies": {
     "soap": "^0.45.0"
