@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SoapService } from './soap.service';
 import { mocked } from 'ts-jest/utils';
-import { BasicAuthSecurity, Client, createClientAsync, WSSecurity } from 'soap';
+import { BasicAuthSecurity, Client, createClientAsync, NTLMSecurity, WSSecurity } from 'soap';
 import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { SoapModuleOptions } from 'src';
-import { BASIC_AUTH, SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
+
+import { SoapModuleOptions } from './soap-module-options.type';
+import { BASIC_AUTH, SOAP_MODULE_OPTIONS, WSSECURITY_AUTH, NTLM_AUTH } from './soap-constants';
+import { SoapService } from './soap.service';
 
 const soapModuleOptionsMock = {
   uri: 'some-uri',
@@ -111,6 +112,19 @@ describe('SoapService', () => {
       await service.createAsyncClient();
 
       expect(clientMock.setSecurity).toBeCalledWith(expect.any(WSSecurity));
+      
+      soapModuleOptionsMock.auth = auth;
+    });
+
+    it('Should use NTLMSecurity if auth.type is NTLM_AUTH', async () => {
+      const auth = soapModuleOptionsMock.auth;
+      service.soapModuleOptions.auth.type = NTLM_AUTH;
+      
+      soapCreateClientAsyncMock.mockResolvedValue(clientMock);
+
+      await service.createAsyncClient();
+
+      expect(clientMock.setSecurity).toBeCalledWith(expect.any(NTLMSecurity));
       
       soapModuleOptionsMock.auth = auth;
     });

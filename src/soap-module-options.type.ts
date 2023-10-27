@@ -1,11 +1,11 @@
 import { IOptions } from 'soap';
 import { ModuleMetadata, Scope, Type } from '@nestjs/common/interfaces';
-import { BASIC_AUTH, WSSECURITY_AUTH } from './soap-constants';
+import { BASIC_AUTH, NTLM_AUTH, WSSECURITY_AUTH } from './soap-constants';
 
 export { Client, IOptions } from 'soap';
 
 interface Auth {
-  type: typeof BASIC_AUTH | typeof WSSECURITY_AUTH;
+  type: typeof BASIC_AUTH | typeof WSSECURITY_AUTH | typeof NTLM_AUTH;
   username: string;
   password: string;
 }
@@ -21,14 +21,25 @@ export type WSSecurityOptions = {
   hasTimeStamp?: boolean;
   hasTokenCreated?: boolean;
   hasNonce?: boolean;
-  mustUnderstand?: boolean,
+  mustUnderstand?: boolean;
   actor?: string;
 };
+
+export interface NTLMSecurityAuth extends Auth {
+  options?: NTLMSecurityOptions
+}
+
+export type NTLMSecurityOptions = {
+  domain?: string;
+  workstation?: string;
+}
+
+export type AuthType = BasicAuth | WSSecurityAuth | NTLMSecurityAuth;
 
 export type SoapModuleOptions = {
   uri: string;
   clientName: string;
-  auth?: BasicAuth | WSSecurityAuth;
+  auth?: AuthType;
   clientOptions?: IOptions;
 };
 
