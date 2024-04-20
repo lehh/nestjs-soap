@@ -147,7 +147,7 @@ Note: for the `useExisting` provider you need to import the module containing th
 
 `uri`: The SOAP service uri.
 
-`auth` (optional): Basic or WSSecurity authentication. Fields `type` (basic or wssecurity), `username` and `password` are required. For the WSSecurity `options` field, refer to [soap-repository](https://www.npmjs.com/package/soap#wssecurity)
+`auth` (optional): Basic, WSSecurity or NTLM authentication. Fields `type` (basic/wssecurity/ntlm), `username` and `password` are required. For the WSSecurity `options` field, refer to [soap-repository](https://www.npmjs.com/package/soap#wssecurity)
  
 `clientOptions` (optional): The soap client options as in [soap repository](https://www.npmjs.com/package/soap#options).
 
