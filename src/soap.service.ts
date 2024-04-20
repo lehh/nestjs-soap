@@ -33,8 +33,10 @@ export class SoapService {
       const logger = new Logger('SoapModule');
 
       logger.error(
-        `${err.message} \n - An error occurred while creating the soap client. Check the SOAP service URL and status.`,
+        `An error occurred while creating the soap client. Check the SOAP service URL and status.`,
       );
+
+      logger.error(err?.message, err);
 
       return null;
     }
