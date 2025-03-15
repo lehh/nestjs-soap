@@ -1,7 +1,15 @@
+import { 
+  createClientAsync,
+  Client,
+  BasicAuthSecurity,
+  ISecurity,
+  WSSecurity,
+  NTLMSecurity 
+} from 'soap';
+
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { SoapModuleOptions, WSSecurityAuth } from './soap-module-options.type';
-import { SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
-import { BasicAuthSecurity, Client, createClientAsync, ISecurity, WSSecurity } from 'soap';
+import { AuthType, NTLMSecurityAuth, SoapModuleOptions, WSSecurityAuth } from './soap-module-options.type';
+import { NTLM_AUTH, SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
 
 @Injectable()
 export class SoapService {
@@ -15,11 +23,7 @@ export class SoapService {
 
       if (!options.auth) return client;
 
-      const {username, password} = options.auth;
-
-      const authMethod: ISecurity = options.auth.type === WSSECURITY_AUTH
-        ? new WSSecurity(username, password, (options.auth as WSSecurityAuth).options)
-        : new BasicAuthSecurity(username, password);
+      const authMethod = this.getAuthMethod(options.auth);
 
       client.setSecurity(authMethod);
 
@@ -29,10 +33,32 @@ export class SoapService {
       const logger = new Logger('SoapModule');
 
       logger.error(
-        `${err.message} \n - An error occurred while creating the soap client. Check the SOAP service URL and status.`,
+        `An error occurred while creating the soap client. Check the SOAP service URL and status.`,
       );
 
+      logger.error(err?.message, err);
+
       return null;
+    }
+  }
+
+  private getAuthMethod(authOptions: AuthType): ISecurity {
+    const { username, password, type } = authOptions;
+
+    switch (type) {
+      case WSSECURITY_AUTH:
+        const WSSOptions = (authOptions as WSSecurityAuth).options;
+        return new WSSecurity(username, password, WSSOptions);
+      case NTLM_AUTH:
+        const NTLMOptions = (authOptions as NTLMSecurityAuth).options;
+        const loginData = {
+          username,
+          password,
+          ...NTLMOptions
+        };
+        return new NTLMSecurity(loginData);
+      default:
+        return new BasicAuthSecurity(username, password);
     }
   }
 }
