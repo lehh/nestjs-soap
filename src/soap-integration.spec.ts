@@ -1,7 +1,6 @@
 import { INestApplication, Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { createClientAsync } from 'soap';
-import { mocked } from 'ts-jest/utils';
 import { SoapModuleOptionsFactory } from './soap-module-options.type'
 import { SoapModule } from './';
 
@@ -15,7 +14,7 @@ describe('SoapModule (integration)', () => {
 
     beforeAll(async () => {
       // mock the return value to be able to test security
-      mocked(createClientAsync).mockResolvedValueOnce(
+      jest.mocked(createClientAsync).mockResolvedValueOnce(
         // @ts-ignore
         Promise.resolve({
           setSecurity: jest.fn(),
@@ -84,7 +83,7 @@ describe('SoapModule (integration)', () => {
     } 
 
     beforeAll(async () => {
-      mocked(createClientAsync).mockResolvedValue(
+      jest.mocked(createClientAsync).mockResolvedValue(
         // @ts-ignore
         Promise.resolve({
           client: "FOR_ROOT_ASYNC"

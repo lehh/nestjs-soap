@@ -3,15 +3,15 @@ import {
   SoapModuleAsyncOptions,
   SoapModuleOptionsFactory,
 } from './soap-module-options.type';
+
 import { buildAsyncProviders, buildClientProvider } from './soap-providers';
 import { FactoryProvider, Scope } from '@nestjs/common';
 
-import { createClientAsync } from 'soap';
-import { mocked } from 'ts-jest/utils';
+// import { createClientAsync } from 'soap';
 import { SOAP_MODULE_OPTIONS } from './soap-constants';
 import { SoapService } from './soap.service';
 
-const createClientAsyncMock = mocked(createClientAsync);
+// const createClientAsyncMock = mocked(createClientAsync);
 
 describe('SoapProviders', () => {
   let soapOptions: SoapModuleOptions;
@@ -117,7 +117,7 @@ describe('SoapProviders', () => {
     it('Should throw error when no option is provided', () => {
       const options = { clientName: 'Test' };
 
-      return expect(() => buildAsyncProviders(options)).toThrowError();
+      return expect(() => buildAsyncProviders(options)).toThrow();
     });
   });
 });
