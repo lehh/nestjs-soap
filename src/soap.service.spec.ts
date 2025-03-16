@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SoapService } from './soap.service';
-import { mocked } from 'ts-jest/utils';
 import { BasicAuthSecurity, Client, createClientAsync, WSSecurity } from 'soap';
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { SoapModuleOptions } from 'src';
 import { BASIC_AUTH, SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
 
@@ -19,7 +17,7 @@ const soapModuleOptionsProviderMock = () => soapModuleOptionsMock;
 
 describe('SoapService', () => {
   let service: SoapService;
-  let soapCreateClientAsyncMock: MaybeMocked<typeof createClientAsync>;
+  let soapCreateClientAsyncMock: jest.MaybeMocked<typeof createClientAsync>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -34,7 +32,7 @@ describe('SoapService', () => {
 
     service = module.get<SoapService>(SoapService);
 
-    soapCreateClientAsyncMock = mocked(createClientAsync);
+    soapCreateClientAsyncMock = jest.mocked(createClientAsync);
   });
 
   describe('createAsyncClient', () => {
@@ -57,7 +55,7 @@ describe('SoapService', () => {
 
       await service.createAsyncClient();
 
-      expect(soapCreateClientAsyncMock).toBeCalledWith(uri, clientOptions);
+      expect(soapCreateClientAsyncMock).toHaveBeenCalledWith(uri, clientOptions);
     });
 
     it('Should not set security when auth is empty', async () => {
@@ -68,7 +66,7 @@ describe('SoapService', () => {
 
       await service.createAsyncClient();
 
-      expect(clientMock.setSecurity).not.toBeCalled();
+      expect(clientMock.setSecurity).not.toHaveBeenCalled();
 
       soapModuleOptionsMock.auth = auth;
     });
@@ -78,7 +76,7 @@ describe('SoapService', () => {
 
       await service.createAsyncClient();
 
-      expect(clientMock.setSecurity).toBeCalled();
+      expect(clientMock.setSecurity).toHaveBeenCalled();
     });
 
     it('Should use BasicAuthSecurity if auth.type is not defined', async () => {
@@ -86,7 +84,7 @@ describe('SoapService', () => {
 
       await service.createAsyncClient();
 
-      expect(clientMock.setSecurity).toBeCalledWith(expect.any(BasicAuthSecurity));
+      expect(clientMock.setSecurity).toHaveBeenCalledWith(expect.any(BasicAuthSecurity));
     });
 
     it('Should use BasicAuthSecurity if auth.type is BASIC_AUTH', async () => {
@@ -97,7 +95,7 @@ describe('SoapService', () => {
 
       await service.createAsyncClient();
 
-      expect(clientMock.setSecurity).toBeCalledWith(expect.any(BasicAuthSecurity));
+      expect(clientMock.setSecurity).toHaveBeenCalledWith(expect.any(BasicAuthSecurity));
       
       soapModuleOptionsMock.auth = auth;
     });
@@ -110,7 +108,7 @@ describe('SoapService', () => {
 
       await service.createAsyncClient();
 
-      expect(clientMock.setSecurity).toBeCalledWith(expect.any(WSSecurity));
+      expect(clientMock.setSecurity).toHaveBeenCalledWith(expect.any(WSSecurity));
       
       soapModuleOptionsMock.auth = auth;
     });
