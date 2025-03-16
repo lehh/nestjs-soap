@@ -1,7 +1,19 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { SoapModuleOptions, WSSecurityAuth } from './soap-module-options.type';
-import { SOAP_MODULE_OPTIONS, WSSECURITY_AUTH } from './soap-constants';
-import { BasicAuthSecurity, Client, createClientAsync, ISecurity, WSSecurity } from 'soap';
+import {
+  AuthType,
+  SSLPFXAuth,
+  SoapModuleOptions,
+  WSSecurityAuth,
+} from './soap-module-options.type';
+import { SOAP_MODULE_OPTIONS, SSL_PFX_AUTH, WSSECURITY_AUTH } from './soap-constants';
+import {
+  BasicAuthSecurity,
+  Client,
+  createClientAsync,
+  ISecurity,
+  WSSecurity,
+  ClientSSLSecurityPFX,
+} from 'soap';
 
 @Injectable()
 export class SoapService {
@@ -15,16 +27,11 @@ export class SoapService {
 
       if (!options.auth) return client;
 
-      const {username, password} = options.auth;
-
-      const authMethod: ISecurity = options.auth.type === WSSECURITY_AUTH
-        ? new WSSecurity(username, password, (options.auth as WSSecurityAuth).options)
-        : new BasicAuthSecurity(username, password);
+      const authMethod = this.getAuthMethod(options.auth);
 
       client.setSecurity(authMethod);
 
       return client;
-
     } catch (err) {
       const logger = new Logger('SoapModule');
 
@@ -33,6 +40,26 @@ export class SoapService {
       );
 
       return null;
+    }
+  }
+
+  private getAuthMethod(authOptions: AuthType): ISecurity {
+    const { username, password, type } = authOptions;
+
+    switch (type) {
+      case WSSECURITY_AUTH:
+        const WSSOptions = (authOptions as WSSecurityAuth).options;
+        return new WSSecurity(username, password, WSSOptions);
+      case SSL_PFX_AUTH:
+        const SSLPFXOptions = (authOptions as SSLPFXAuth).options;
+        const loginData = {
+          pfx: SSLPFXOptions.pfx,
+          passphrase: SSLPFXOptions.passphrase,
+          ...SSLPFXOptions.defaults,
+        };
+        return new ClientSSLSecurityPFX(loginData);
+      default:
+        return new BasicAuthSecurity(username, password);
     }
   }
 }
