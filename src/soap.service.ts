@@ -15,7 +15,7 @@ export class SoapService {
 
       if (!options.auth) return client;
 
-      const {username, password} = options.auth;
+      const { username, password } = options.auth;
 
       const authMethod: ISecurity = options.auth.type === WSSECURITY_AUTH
         ? new WSSecurity(username, password, (options.auth as WSSecurityAuth).options)
